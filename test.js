@@ -42,7 +42,7 @@ gameState.load.prototype = {
     this.game.load.image('arrow', 'img/canon.png');
 
     //lazer
-    this.game.load.image('lazer', 'img/lazer.png'); // a faire
+    this.game.load.image('lazer', 'img/lazer.png'); 
 
 
     //son balle une fois les briques toucher
@@ -193,7 +193,7 @@ gameState.main.prototype={
     this.balle.events.onOutOfBounds.add(this.ballePerdu, this);
 
     this.score = 0;
-    this.scoreText = this.game.add.text(3, 360, 'SCORE \n 0', { font: "15px arial", fill: "#00ffe4", align: "center" });
+    this.scoreText = this.game.add.text(10, 360, '0', { font: "20px arial", fill: "#00ffe4", align: "center" });
     livesText = this.game.add.text(780, 680, 'lives: 3', { font: "20px arial", fill: "#00ffe4", align: "center" });
     introText = this.game.add.text(350, 470, ' Click to start ', { font: "30px arial", fill: "#ffffff", align: "center" });
     //introText.anchor.setTo(0.5, 0.5);
@@ -288,7 +288,7 @@ gameState.main.prototype={
       }
 
       this.score += 10;
-      this.scoreText.text = 'SCORE '+ '\n' + this.score;
+      this.scoreText.text = this.score;
 
   },//hit
 
