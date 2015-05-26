@@ -236,10 +236,10 @@ gameState.main.prototype={
       }*/
 
 
-      //mouvemet via ma souris methode 2
+      //mouvemet via la souris methode 2
       this.paddle.position.x = this.game.input.mousePointer.x; // positionne le padlle en x et suit la souris sans quitter l'axe x donné
 
-      if (this.paddle.x < 50) //pert au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
+      if (this.paddle.x < 50) //permet au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
         {
           this.paddle.x = 50;
         }
