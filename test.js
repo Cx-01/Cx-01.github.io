@@ -95,7 +95,7 @@ gameState.main.prototype={
     this.line = this.game.add.sprite(0,0, 'line');
 
     //canon
-    this.arrow = this.game.add.sprite(250, 160, 'arrow');
+    this.arrow = this.game.add.sprite(251, 160, 'arrow');
     //this.game.physics.arcade.enable(this.arrow);
     //this.arrow.body.immovable = true;
     this.arrow.anchor.setTo(0.5, 0.5); 
