@@ -2,7 +2,7 @@
       //Breakout game test
 
 
-var game = new Phaser.Game(960, 720, Phaser.Auto, "test");
+var game = new Phaser.Game(960, 720, Phaser.Auto, "Breakout");
 game.transparent=true;
 
 var gameState= {};
@@ -46,10 +46,7 @@ gameState.load.prototype = {
 
 
     //son balle une fois les briques toucher
-    this.game.load.audio('hitBrick', 'sounds/hit.wav');
-
-    this.game.load.audio('music', 'sounds/music.wav');
-    
+    this.game.load.audio('hitBrick', 'sounds/hit.wav');    
 
   },//preload
 
@@ -58,14 +55,17 @@ gameState.load.prototype = {
    }
   };//gameState.load.prototype
 
- var balleOnPaddle = true;
+var balleOnPaddle = true;
 
- var lives = 3;
- //var score = 0; // peut etre utiliser en creant une variable ou en utilisant this.score voir ligne 156
+var vie = 4;
+var scoreText;
+var introText;
 
- var scoreText;
- var livesText;
- var introText;
+var lazer;
+var lazers;
+var lazerTime = 0;
+var cursors ;
+
 
 gameState.main= function(){};
 gameState.main.prototype={
@@ -83,25 +83,49 @@ gameState.main.prototype={
 
     //son balle -> brique
     this.hitBrick = this.game.add.audio('hitBrick');
-
-    /*this.music = this.game.add.audio('music');
-    this.music.play();//ne se repete pas*/
    
     //créer le background à l'état de sprite
     this.background = this.game.add.tileSprite(0,0,960,720, 'background');
     this.background.width = this.game.width; 
     this.background.height = this.game.height;
 
-    this.line = this.game.add.sprite(0,0, 'line');
+    //vie
+    this.liveIcons = this.add.group();
+      for (var x = 0; x < 1 ; x++)
+      { 
+        for (var y = 0; y < 4; y++){
+           var lifeIcon = this.liveIcons.create (915 + (x * 50), 250 + (y * 50), 'life' );
+        }
+       
+      }
+
 
     //canon
-    this.arrow = this.game.add.sprite(251, 160, 'arrow');
+    this.arrow = this.game.add.sprite(250, 160, 'arrow');
     //this.game.physics.arcade.enable(this.arrow);
     //this.arrow.body.immovable = true;
     this.arrow.anchor.setTo(0.5, 0.5); 
 
-    //life
-    this.life = this.game.add.sprite(915,360, 'life');
+    /*/lazer a faire
+    this.lazer = this.game.add.sprite(250,160,'lazer');
+    this.lazer.width = this.lazer.width/1.5;
+    this.lazer.height = this.lazer.height/1.5;
+    this.lazer.anchor.setTo(0.5, 0.5);
+    this.physics.arcade.enable(this.lazer);
+    this.lazer.body.velocity.y= 50;*/
+
+    //lazer
+    lazers = game.add.group();
+    lazers.enableBody = true;
+    lazers.physicsBodyType = Phaser.Physics.ARCADE;
+     //  All 40 of them
+    lazers.createMultiple(50, 'lazer');
+    lazers.setAll('anchor.x', 0.5);
+    lazers.setAll('anchor.y', 0.5);
+    //lazers.setAll('onOutOfBoundsKill', true);
+    //lazers.setAll('checkWorldBounds', true);
+    
+    this.line = this.game.add.sprite(0,0, 'line');
 
     this.wall = this.game.add.sprite(210, 120, 'wall');
     this.game.physics.arcade.enable(this.wall);
@@ -114,10 +138,6 @@ gameState.main.prototype={
     this.paddle.anchor.setTo(0.5, 0.5);
     this.paddle.body.collideWorldBounds = true;
 
-    //lazer a faire
-    this.lazer = this.game.add.group();
-    this.lazer.createMultiple(500, 'lazer', 0, false);
-   
     //brick
     //this.brick = this.game.add.sprite(430,50,'brick');
     this.brick = this.game.add.group();
@@ -131,10 +151,10 @@ gameState.main.prototype={
       {
           for (var x = 0; x < 9; x++) // nombre de colonne en x
           {
-              bricks1 =this.
+              bricks = this.
               brick.create(80 + (x * 90), 50 + (y * 30), 'brick' );// Position et espacement(y*nbre) des brick
-              bricks1.body.bounce.set(1);
-              bricks1.body.immovable = true;
+              bricks.body.bounce.set(1);
+              bricks.body.immovable = true;
           }
       }
 
@@ -144,7 +164,7 @@ gameState.main.prototype={
       {
           for (var x = 0; x < 5; x++) // nombre de colonne en x
           {
-              bricks1 =this.
+              bricks1 = this.
               brick.create(440 + (x * 90), 125 + (y * 30), 'brick' );// Position et espacement des brick
               bricks1.body.bounce.set(1);
               bricks1.body.immovable = true;
@@ -157,7 +177,7 @@ gameState.main.prototype={
       {
           for (var x = 0; x < 9; x++) // nombre de colonne en x
           {
-              bricks2 =this.
+              bricks2 = this.
               brick.create(80 + (x * 90), 230 + (y * 30), 'brick' );// Position et espacement des brick
               bricks2.body.bounce.set(1);
               bricks2.body.immovable = true;
@@ -170,13 +190,12 @@ gameState.main.prototype={
       {
           for (var x = 0; x < 6; x++) // nombre de colonne en x
           {
-              bricks3 =this.
+              bricks3 = this.
               brick.create(80 + (x * 90), 310 + (y * 30), 'brick' );// Position et espacement des brick
               bricks3.body.bounce.set(1);
               bricks3.body.immovable = true;
           }
       }
-
 
     //balle 
     this.balle = this.game.add.sprite(430,625, 'balle'); 
@@ -193,10 +212,14 @@ gameState.main.prototype={
     this.balle.events.onOutOfBounds.add(this.ballePerdu, this);
 
     this.score = 0;
-    this.scoreText = this.game.add.text(10, 360, '0', { font: "20px arial", fill: "#00ffe4", align: "center" });
-    livesText = this.game.add.text(780, 680, 'lives: 3', { font: "20px arial", fill: "#00ffe4", align: "center" });
+    this.scoreText = this.game.add.text(10, 340, '0', { font: "20px arial", fill: "#00ffe4", align: "center" });
     introText = this.game.add.text(350, 470, ' Click to start ', { font: "30px arial", fill: "#ffffff", align: "center" });
     //introText.anchor.setTo(0.5, 0.5);
+
+
+    /*//  Game input
+    cursors = game.input.keyboard.createCursorKeys();
+    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);*/
 
   },//create
 
@@ -219,27 +242,14 @@ gameState.main.prototype={
   update: function(){
 
       //répétition du background
-      this.background.tilePosition.x += 0.2; //le nombre est pour la vitesse
+      //this.background.tilePosition.x += 0.2; //le nombre est pour la vitesse
 
       this.arrow.rotation = this.game.physics.arcade.angleBetween(this.arrow, this.balle);
 
-      /*// Mouvement via la souris methode 1
-      this.paddle.body.x = this.game.input.worldX - this.paddle.body.width / 2;
-
-      if (this.paddle.body.x <= 0)
-      {
-        this.paddle.body.x = 0;
-      }
-       else if (this.paddle.body.x > this.game.width - 100 )
-      {
-        this.paddle.body.x = this.game.width - 100;
-      }*/
-
-
-      //mouvemet via la souris methode 2
+      //mouvemet via la souris 
       this.paddle.position.x = this.game.input.mousePointer.x; // positionne le padlle en x et suit la souris sans quitter l'axe x donné
 
-      if (this.paddle.x < 50) //permet au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
+      if (this.paddle.x < 50) //pert au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
         {
           this.paddle.x = 50;
         }
@@ -260,10 +270,16 @@ gameState.main.prototype={
       this.game.physics.arcade.collide(this.balle, this.wall);
       // Collision de la balle et brick==> hit function
       this.game.physics.arcade.collide(this.balle, this.brick, this.hit, null, this);
-
+      this.game.physics.arcade.overlap(this.balle, this.life,this.onOutOfBounds, this.viePerdu, null,this);
+      
       if (this.score ==690){
        this.restart();
       }
+
+     /* if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+      {
+        this.feuxLazer;
+      }*/
 
   },//update
 
@@ -289,42 +305,36 @@ gameState.main.prototype={
 
       this.score += 10;
       this.scoreText.text = this.score;
-
   },//hit
 
   ballePerdu: function(){
-    lives--;
-    livesText.text = 'lives: ' + lives;
+   var lifeIcon = this.liveIcons.getFirstAlive();
+    if (lifeIcon) {
+      lifeIcon.destroy();
+    }
 
-    if (lives === 0)
-    {
-     this.gameOver(), this.restart();
+    if (this.liveIcons.countLiving() <= 0) {
+       this.gameOver(), this.restart();
     }
     else
     {
-    balleOnPaddle = true;
+      balleOnPaddle = true;
+      this.balle.reset(this.paddle.body.x + 25, this.paddle.y - 25);
+    }
 
-    this.balle.reset(this.paddle.body.x + 25, this.paddle.y - 25);
-   }
-   
   },//balleperdu
-
 
   gameOver: function() {
     this.balle.body.velocity.setTo(0, 0);
     introText.text = 'Game Over!';
     introText.visible = true;
-
-
+    this.liveIcons.destroy();
   },
 
   restart: function() {
     balleOnPaddle = true;
-    lives = 3;
     game.state.start('main');
-   
   }
-
 
 };//Protoype
 
