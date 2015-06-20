@@ -248,24 +248,11 @@ gameState.main.prototype={
   update: function(){
 
       //répétition du background
-      this.background.tilePosition.x += 0.2; //le nombre est pour la vitesse
+      //this.background.tilePosition.x += 0.2; //le nombre est pour la vitesse
 
       this.arrow.rotation = this.game.physics.arcade.angleBetween(this.arrow, this.balle);
 
-      /*// Mouvement via la souris methode 1
-      this.paddle.body.x = this.game.input.worldX - this.paddle.body.width / 2;
-
-      if (this.paddle.body.x <= 0)
-      {
-        this.paddle.body.x = 0;
-      }
-       else if (this.paddle.body.x > this.game.width - 100 )
-      {
-        this.paddle.body.x = this.game.width - 100;
-      }*/
-
-
-      //mouvemet via ma souris methode 2
+      //mouvemet via la souris 
       this.paddle.position.x = this.game.input.mousePointer.x; // positionne le padlle en x et suit la souris sans quitter l'axe x donné
 
       if (this.paddle.x < 50) //pert au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
@@ -283,7 +270,6 @@ gameState.main.prototype={
         this.balle.body.x = this.paddle.x -10; //définit la position la balle sur la pallette 
       }
 
-
       //balle et la pallete 'collision'
       this.game.physics.arcade.collide(this.paddle, this.balle,this.paddleHit, null, this); // je devrai ajouter 1 nvelle fonction comme this.hit mais avc la balle et la palette
       //balle et la pallete 'collision'
@@ -292,13 +278,9 @@ gameState.main.prototype={
       this.game.physics.arcade.collide(this.balle, this.brick, this.hit, null, this);
       this.game.physics.arcade.overlap(this.balle, this.life,this.onOutOfBounds, this.viePerdu, null,this);
       
-
       if (this.score ==690){
        this.restart();
       }
-
-
-   
 
      /* if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
       {
@@ -329,11 +311,9 @@ gameState.main.prototype={
 
       this.score += 10;
       this.scoreText.text = this.score;
-
   },//hit
 
   ballePerdu: function(){
-
    var lifeIcon = this.liveIcons.getFirstAlive();
     if (lifeIcon) {
       lifeIcon.destroy();
@@ -355,14 +335,12 @@ gameState.main.prototype={
     introText.text = 'Game Over!';
     introText.visible = true;
     this.liveIcons.destroy();
-
   },
 
   restart: function() {
     balleOnPaddle = true;
-    game.state.start('main'); 
+    game.state.start('main');
   }
-
 
 };//Protoype
 
