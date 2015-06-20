@@ -1,9 +1,158 @@
 body{
-margin:35px;
-background-color: #000;
+position: relative;
+font-family: verdana;
+font-size: 11pt;
+background-size: 100%;
+background-image: url(img/background.png);
+
 }
-#test{
-  width:960px;
-  height:720px;
-  margin: auto;
+
+#wrapper{
+width: 1200px;
+height: 1000px;
+margin: auto;
+}
+
+#cadre{
+width: 660px;
+height: 500px;
+background-image: url(img/cadre.png);
+margin: 50px 0px 0px 300px;
+
+}
+
+#Breakout{
+width:645px;
+height:485px;
+margin: auto;
+padding-top: 9px;
+
+}
+
+#titre{
+width: 100px;
+height: 550px;
+float: left;
+border: #00ffd2 1px solid;
+margin-top: -50px;
+margin-left: 170px;
+background-color: #020019;
+}
+
+.b{
+display: block;
+width: 40px;
+height: 34px;
+margin:50px 0px 0px 30px;
+background-image: url(img/b.png);
+float: left;
+}
+
+.b:hover{
+background-image: url(img/b-hover.png);
+}
+
+.r{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/r.png);
+float: left;
+}
+
+.r:hover{
+background-image: url(img/r-hover.png);
+}
+
+.e{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/e.png);
+float: left;
+}
+
+.e:hover{
+background-image: url(img/e-hover.png);
+}
+
+.a{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/a.png);
+float: left;
+}
+
+.a:hover{
+background-image: url(img/a-hover.png);
+}
+
+.k{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/k.png);
+float: left;
+}
+
+.k:hover{
+background-image: url(img/k-hover.png);
+}
+
+.o{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/o.png);
+float: left;
+}
+
+.o:hover{
+background-image: url(img/o-hover.png);
+}
+
+.u{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/u.png);
+float: left;
+}
+
+.u:hover{
+background-image: url(img/u-hover.png);
+}
+
+.t{
+display: block;
+width: 40px;
+height: 34px;
+margin:5px 0px 0px 30px;
+background-image: url(img/t.png);
+float: left;
+}
+
+.t:hover{
+background-image: url(img/t-hover.png);
+}
+
+#footer{
+width: 640px;
+height: 50px;
+margin: auto;
+clear: both;
+}
+
+#footer p{
+font-size: 0.5em;
+font-weight: bold;
+padding-left: 540px;
+color: #00ff7e;
 }
