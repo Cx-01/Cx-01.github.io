@@ -1,7 +1,5 @@
       
       //Breakout game test
-
-
 var game = new Phaser.Game(960, 720, Phaser.Auto, "test");
 game.transparent=true;
 
