@@ -356,14 +356,11 @@ gameState.main.prototype={
     introText.visible = true;
     this.liveIcons.destroy();
 
-
   },
 
   restart: function() {
     balleOnPaddle = true;
-    lives = 3;
-    game.state.start('main');
-   
+    game.state.start('main'); 
   }
 
 
