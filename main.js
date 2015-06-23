@@ -1,6 +1,4 @@
-      
-      //Breakout game test
-var game = new Phaser.Game(960, 720, Phaser.Auto, "test");
+var game = new Phaser.Game(960, 720, Phaser.Auto, "Breakout");
 game.transparent=true;
 
 var gameState= {};
@@ -22,7 +20,7 @@ gameState.load.prototype = {
     this.game.load.image('line', 'img/lines.png');
 
     //paddle
-    this.game.load.image('paddle', 'img/paddle.png');
+    this.game.load.image('paddle', 'img/paddle2.png');
 
     //wall
     this.game.load.image('wall', 'img/wall.png');
@@ -31,24 +29,31 @@ gameState.load.prototype = {
     this.game.load.image('brick', 'img/brik3.png');
 
     //balle
-    this.game.load.image('balle', 'img/balle.png');
+    this.game.load.image('balle', 'img/balle2.png');
 
     //life
     this.game.load.image('life', 'img/life.png');
     
-    //arrow
-    this.game.load.image('arrow', 'img/canon.png');
+    //canon
+    this.game.load.image('canon', 'img/canon.png');
 
-    //lazer
-    this.game.load.image('lazer', 'img/lazer.png'); 
+    this.game.load.image('bouton', 'img/bouton.png');
 
+    this.game.load.image('retry', 'img/retry.png');
 
-    //son balle une fois les briques toucher
-    this.game.load.audio('hitBrick', 'sounds/hit.wav');
+    this.game.load.image('lazer', 'img/lazer.png');
 
-    this.game.load.audio('music', 'sounds/music.wav');
-    
+    //particule
+    this.game.load.image('particule', 'img/particule.png'); 
 
+    //son: balle --> brique
+    this.game.load.audio('hitBrick', 'sounds/hit.mp3');    
+
+    //son: balle --> paddle
+    this.game.load.audio('hitPaddle', 'sounds/paddle-hit.mp3');    
+
+    //son: vie-perdue
+    this.game.load.audio('viePerdu', 'sounds/live.mp3');  
   },//preload
 
   create: function() {
@@ -57,15 +62,13 @@ gameState.load.prototype = {
   };//gameState.load.prototype
 
 var balleOnPaddle = true;
-
-var vie = 4;
 var scoreText;
 var introText;
 
-var lazer;
+/*var lazer;
 var lazers;
 var lazerTime = 0;
-var cursors ;
+var cursors ;*/
 
 
 gameState.main= function(){};
@@ -82,12 +85,11 @@ gameState.main.prototype={
     // crée une variable pour les touches
     //this.cursor = game.input.keyboard.createCursorKeys();
 
-    //son balle -> brique
+    //sons
     this.hitBrick = this.game.add.audio('hitBrick');
+    this.hitPaddle = this.game.add.audio('hitPaddle');
+    this.viePerdu = this.game.add.audio('viePerdu');
 
-    /*this.music = this.game.add.audio('music');
-    this.music.play();//ne se repete pas*/
-   
     //créer le background à l'état de sprite
     this.background = this.game.add.tileSprite(0,0,960,720, 'background');
     this.background.width = this.game.width; 
@@ -103,12 +105,21 @@ gameState.main.prototype={
        
       }
 
-
     //canon
-    this.arrow = this.game.add.sprite(250, 160, 'arrow');
+    this.canon = this.game.add.sprite(250, 160, 'canon');
     //this.game.physics.arcade.enable(this.arrow);
     //this.arrow.body.immovable = true;
-    this.arrow.anchor.setTo(0.5, 0.5); 
+    this.canon.anchor.setTo(0.5, 0.5); 
+
+    //bouton start et retry
+    this.button = game.add.button(380, 440,'bouton', function(){;game.state.start('MainState');}, this);
+    this.button.inputEnabled = true;
+    this.button.events.onInputDown.add(this.releaseBall, this);
+
+    this.retry = game.add.button(380, 440,'retry', function(){;game.state.start('MainState');}, this);
+    this.retry.inputEnabled = true;
+    this.retry.visible = false;
+
 
     /*/lazer a faire
     this.lazer = this.game.add.sprite(250,160,'lazer');
@@ -118,7 +129,10 @@ gameState.main.prototype={
     this.physics.arcade.enable(this.lazer);
     this.lazer.body.velocity.y= 50;*/
 
-    //lazer
+    this.particule = this.game.add.emitter(0, 0 ,500); // dans update, je le positionne prés de la balle , le 3ieme est pour le nombre de sprite à émettre
+    this.particule.makeParticles('particule');
+
+    /*/lazer
     lazers = game.add.group();
     lazers.enableBody = true;
     lazers.physicsBodyType = Phaser.Physics.ARCADE;
@@ -126,11 +140,13 @@ gameState.main.prototype={
     lazers.createMultiple(50, 'lazer');
     lazers.setAll('anchor.x', 0.5);
     lazers.setAll('anchor.y', 0.5);
-    //lazers.setAll('onOutOfBoundsKill', true);
-    //lazers.setAll('checkWorldBounds', true);
+    lazers.setAll('onOutOfBoundsKill', true);
+    lazers.setAll('checkWorldBounds', true);*/
     
+    //ligne->rose
     this.line = this.game.add.sprite(0,0, 'line');
 
+    //wall -> autour du canon
     this.wall = this.game.add.sprite(210, 120, 'wall');
     this.game.physics.arcade.enable(this.wall);
     this.wall.body.immovable = true;
@@ -202,7 +218,7 @@ gameState.main.prototype={
       }
 
     //balle 
-    this.balle = this.game.add.sprite(430,625, 'balle'); 
+    this.balle = this.game.add.sprite(430,626, 'balle'); 
     this.game.physics.arcade.enableBody(this.balle);
     this.balle.anchor.setTo(0.5);
     //this.balle.body.velocity.x = 300;
@@ -211,20 +227,15 @@ gameState.main.prototype={
     this.balle.body.collideWorldBounds = true,
     this.balle.body.bounce.set(1);
     this.balle.checkWorldBounds = true;
-    this.game.input.onTap.add(this.releaseBall, this);
+    //this.game.input.onTap.add(this.releaseBall, this);
 
     this.balle.events.onOutOfBounds.add(this.ballePerdu, this);
 
     this.score = 0;
-    this.scoreText = this.game.add.text(10, 340, '0', { font: "20px arial", fill: "#00ffe4", align: "center" });
-    introText = this.game.add.text(350, 470, ' Click to start ', { font: "30px arial", fill: "#ffffff", align: "center" });
+    this.scoreText = this.game.add.text(10, 340, '0', { font: "21px verdana", fill: "#00ffe4", align: "center" });
+    //introText = this.game.add.text(350, 470, ' Click to start ', { font: "30px verdana", fill: "#ffffff", align: "center" });
     //introText.anchor.setTo(0.5, 0.5);
-
-
-    /*//  Game input
-    cursors = game.input.keyboard.createCursorKeys();
-    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);*/
-
+    
   },//create
 
   releaseBall: function(){
@@ -233,27 +244,34 @@ gameState.main.prototype={
         balleOnPaddle = false;
         this.balle.body.velocity.y = -300;
         this.balle.body.velocity.x = -75;
-        introText.visible = false;
+        this.button.visible =false;
+        this.game.input.onTap.add(this.releaseBall, this);
+        //introText.visible = false;
       }
-
-      //qd la balle part le son marche ==>ok
-      /*if ( this.releaseBall = true){
-        this.hitBrick.play();
-      }*/
-
-  },//re
+  },//releaseBall
 
   update: function(){
 
-      //répétition du background
+      //répétition et mouvemenbt du background
       //this.background.tilePosition.x += 0.2; //le nombre est pour la vitesse
 
-      this.arrow.rotation = this.game.physics.arcade.angleBetween(this.arrow, this.balle);
+      this.canon.rotation = this.game.physics.arcade.angleBetween(this.canon, this.balle);
+
+      this.particule.x = this.balle.x ;
+      this.particule.y = this.balle.y ;
+      this.particule.start(true, 700, null , 1.5); // si vrai-> émetteur de sprite, durée--> fin de vie, null --> ne pas supprimé, nbre de sprite à émettre?
+
+      //test ---> triche 
+      /*if(balleOnPaddle = true){
+      this.particule.start(true, 700, null , 2);
+      }*/
+
+      //this.lazer.rotation = this.game.physics.arcade.angleBetween(this.lazer, this.balle);
 
       //mouvemet via la souris 
       this.paddle.position.x = this.game.input.mousePointer.x; // positionne le padlle en x et suit la souris sans quitter l'axe x donné
 
-      if (this.paddle.x < 50) //pert au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
+      if (this.paddle.x < 50) //empeche au paddle de pas dépasser l'écran du jeu ( a voir si pas autre méthode)
         {
           this.paddle.x = 50;
         }
@@ -265,27 +283,22 @@ gameState.main.prototype={
       //balle sur la pallette
       if (balleOnPaddle)
       {
-        this.balle.body.x = this.paddle.x -10; //définit la position la balle sur la pallette 
+        this.balle.body.x = this.paddle.x -10; //définit la position la balle sur le paddle
       }
 
       //balle et la pallete 'collision'
-      this.game.physics.arcade.collide(this.paddle, this.balle,this.paddleHit, null, this); // je devrai ajouter 1 nvelle fonction comme this.hit mais avc la balle et la palette
-      //balle et la pallete 'collision'
+      this.game.physics.arcade.collide(this.paddle, this.balle,this.paddleHit, null, this); // je devrai ajouter 1 nvelle fonction comme this.hit mais avc la balle et paddle-->ok
+      //balle et mur 'collision'
       this.game.physics.arcade.collide(this.balle, this.wall);
       // Collision de la balle et brick==> hit function
       this.game.physics.arcade.collide(this.balle, this.brick, this.hit, null, this);
-      this.game.physics.arcade.overlap(this.balle, this.life,this.onOutOfBounds, this.viePerdu, null,this);
-      
+
+      // Une fois tt les briques detruites et le score obtenu game over
       if (this.score ==690){
-       this.restart();
+       this.gameOver();
       }
 
-     /* if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
-      {
-        this.feuxLazer;
-      }*/
-
-  },//update
+  }, //update
 
   paddleHit: function(paddle, balle){
 
@@ -297,6 +310,12 @@ gameState.main.prototype={
       this.balle.body.velocity.x += 150 * 1.1;
     }
 
+    // son: balle->paddle
+    if ( this.balle.event = this.paddleHit){
+      this.hitPaddle.play();
+      this.hitPaddle.volume = 0.4;
+    }
+
   },//paddleHit
 
   hit: function(balle, brick) {
@@ -305,6 +324,7 @@ gameState.main.prototype={
       //test--> essaye d'activer un son qd la balle touche les briques --> ok
       if (this.balle.event = brick.kill() ){
         this.hitBrick.play();
+        this.hitBrick.volume = 0.05;
       }
 
       this.score += 10;
@@ -318,20 +338,27 @@ gameState.main.prototype={
     }
 
     if (this.liveIcons.countLiving() <= 0) {
-       this.gameOver(), this.restart();
+       this.gameOver();
+       //this.retry.events.onInputDown.add(this.restart, this);
     }
     else
     {
       balleOnPaddle = true;
-      this.balle.reset(this.paddle.body.x + 25, this.paddle.y - 25);
+      this.balle.reset(this.paddle.body.x + 25, this.paddle.y - 24);
+    }
+
+    if (this.balleperdu = true){
+      this.viePerdu.play();
+      this.viePerdu.volume = 0.05;
     }
 
   },//balleperdu
 
   gameOver: function() {
     this.balle.body.velocity.setTo(0, 0);
-    introText.text = 'Game Over!';
-    introText.visible = true;
+    this.retry.events.onInputDown.add(this.restart, this);
+    this.retry.visible =true;
+    //introText.visible = true;
     this.liveIcons.destroy();
   },
 
