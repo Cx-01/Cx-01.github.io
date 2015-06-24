@@ -1,4 +1,4 @@
-var game = new Phaser.Game(960, 720,Phaser.AUTO, "Breakout");
+var game = new Phaser.Game(960, 720,Phaser.CANVAS, "Breakout");
 game.transparent=true;
 
 var gameState= {};
@@ -91,9 +91,9 @@ gameState.main.prototype={
     this.viePerdu = this.game.add.audio('viePerdu');
 
     //créer le background à l'état de sprite
-    this.background = this.game.add.tileSprite(0,0,960,720, 'background');
-    this.background.width = this.game.width; 
-    this.background.height = this.game.height;
+    this.background = this.game.add.sprite(0,0, 'background');
+    //this.background.width = this.game.width; 
+    //this.background.height = this.game.height;
 
     //vie
     this.liveIcons = this.add.group();
