@@ -1,4 +1,4 @@
-var game = new Phaser.Game(960, 720, Phaser.CANVAS, "Breakout");
+var game = new Phaser.Game(960, 720,Phaser.AUTO, "Breakout");
 game.transparent=true;
 
 var gameState= {};
