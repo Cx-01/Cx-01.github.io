@@ -35,7 +35,7 @@ gameState.load.prototype = {
     this.game.load.image('life', 'img/life.png');
     
     //canon
-    this.game.load.image('canon', 'img/canon.png');
+    //this.game.load.image('canon', 'img/canon.png');
 
     this.game.load.image('bouton', 'img/bouton.png');
 
@@ -106,10 +106,10 @@ gameState.main.prototype={
       }
 
     //canon
-    this.canon = this.game.add.sprite(250, 160, 'canon');
+   // this.canon = this.game.add.sprite(250, 160, 'canon');
     //this.game.physics.arcade.enable(this.arrow);
     //this.arrow.body.immovable = true;
-    this.canon.anchor.setTo(0.5, 0.5); 
+    //this.canon.anchor.setTo(0.5, 0.5); 
 
     //bouton start et retry
     this.button = game.add.button(380, 440,'bouton', function(){;game.state.start('MainState');}, this);
