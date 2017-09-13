@@ -255,7 +255,7 @@ gameState.main.prototype={
       //répétition et mouvemenbt du background
       //this.background.tilePosition.x += 0.2; //le nombre est pour la vitesse
 
-      this.canon.rotation = this.game.physics.arcade.angleBetween(this.canon, this.balle);
+      //this.canon.rotation = this.game.physics.arcade.angleBetween(this.canon, this.balle);
 
       this.particule.x = this.balle.x ;
       this.particule.y = this.balle.y ;
