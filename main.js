@@ -23,7 +23,7 @@ gameState.load.prototype = {
     this.game.load.image('paddle', 'img/paddle2.png');
 
     //wall
-    this.game.load.image('wall', 'img/wall.png');
+    //this.game.load.image('wall', 'img/wall.png');
 
     //brik
     this.game.load.image('brick', 'img/brik3.png');
