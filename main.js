@@ -147,9 +147,9 @@ gameState.main.prototype={
     this.line = this.game.add.sprite(0,0, 'line');
 
     //wall -> autour du canon
-    this.wall = this.game.add.sprite(210, 120, 'wall');
+    /*this.wall = this.game.add.sprite(210, 120, 'wall');
     this.game.physics.arcade.enable(this.wall);
-    this.wall.body.immovable = true;
+    this.wall.body.immovable = true;*/
 
     //paddle
     this.paddle = this.game.add.sprite(this.game.world.centerX, 650, 'paddle');
